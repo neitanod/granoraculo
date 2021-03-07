@@ -1,0 +1,84 @@
+<html>
+    <h1>
+        ¡El Gran Oráculo les dá la bienvenida!
+    </h1>
+    <p>
+    El Gran Oráculo está listo para recibirlos.
+    </p>
+    <p>Pueden preguntarle lo que quieran, pero recuerden ser respetuosos y siempre comenzar la pregunta con la frase: <b>"Oh gran oráculo, responde por favor esta pregunta: "</b></p>
+    <p>
+        <textarea id="pregunta" onkeypress="oraculo.input(event)"></textarea>
+    </p>
+    <button onclick="oraculo.preguntar()">Preguntar (Enter)</button>
+    <button onclick="location.reload()">Comenzar otra vez (F5)</button>
+    <h1>
+        Respuesta:
+    </h1>
+    <h2 id="respuesta">
+    </h2>
+    <script>
+        function Oraculo(inputFrom, outputTo) {
+            this.saludo = "Oh gran oráculo, responde por favor esta pregunta: ";
+            this.respuesta = "";
+            this.ended = false;
+
+            this.input = function(event) {
+
+                if(!this.ended) {
+                    if(event.key == "Enter") {
+                        this.ended = true;
+                    } else {
+                        this.respuesta += event.key; // acumulo caracter en la respuesta
+
+                        // trato de detectar si la víctima está al teclado
+                        if (
+                            this.respuesta.substring(0, 3).toLowerCase() == "oh " ||
+                            this.respuesta.substring(0, 3).toLowerCase() == "oh," ||
+                            this.respuesta.substring(0, 3).toLowerCase() == "ho " ||
+                            this.respuesta.substring(0, 2).toLowerCase() == "o "
+                        ) {
+                            this.ended = true;
+                            this.respuesta = "xxx"; // respuesta especial que aborta el truco
+                        }
+
+                        inputFrom.value = this.saludo.substring(0, this.respuesta.length); // muestro el saludo en vez de lo que el usuario escribe
+                    }
+                } else {
+                    if(event.key == "Enter") {
+                        this.preguntar();
+                    } else {
+                        inputFrom.value += event.key;
+                    }
+                }
+
+                console.log(event);
+
+
+                event.preventDefault();
+            }
+
+            this.preguntar = function() {
+                // Trato de detectar si es la víctima la que está usando el teclado:
+                if ( this.respuesta.substring(0, 3).toLowerCase() == "xxx" ||
+                    this.respuesta == ""  // Enter como primer tecla (cadena vacía) también aborta la pregunta
+                ) {
+                    outputTo.innerText = "Tú no eres digno de hacerme preguntas.  Dale el teclado a alguien digno!";
+                } else {
+                    outputTo.innerText = this.respuesta;
+                }
+
+            }
+
+        }
+        var oraculo = new Oraculo( document.getElementById("pregunta"), document.getElementById("respuesta") );
+    </script>
+    <style>
+        #pregunta {
+            height: 15%;
+            width: 80%;
+        }
+        #respuesta {
+            color: red;
+        }
+    </style>
+</html>
